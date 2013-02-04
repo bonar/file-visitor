@@ -17,8 +17,8 @@ Jeweler::Tasks.new do |gem|
   gem.name = "file-visitor"
   gem.homepage = "http://github.com/bonar/file-visitor"
   gem.license = "MIT"
-  gem.summary = %Q{TODO: one-line summary of your gem}
-  gem.description = %Q{TODO: longer description of your gem}
+  gem.summary = %Q{file path collecting utility}
+  gem.description = %Q{you can collect file paths by mtime/name/ext/block filters.}
   gem.email = "bonar@me.com"
   gem.authors = ["bonar"]
   # dependencies defined in Gemfile
