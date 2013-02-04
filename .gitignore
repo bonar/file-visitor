@@ -1,5 +1,6 @@
 pkg/
 rdoc/
+doc/
 spec/data_for_test
 *.sw?
 .DS_Store

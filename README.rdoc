@@ -1,6 +1,137 @@
 = file-visitor
 
-Description goes here.
+file path collectiong utility
+
+== DESCRIPTION
+
+file-visitor is an alternative way to collecting files.
+We often write code to collect file, like this.
+
+  Dir.glob("/usr/local/lib/*.a")
+
+Dir.glob or UNIX find command is very useful.
+But in the following cases, it is not enough. 
+
+* need to combine various conditions. 
+* need to write the conditions of the file path to collect by ruby. 
+* need to test and reuse conditions. 
+
+file-visitor way to collect files
+
+  require 'file/visitor'
+  
+  visitor = File::Visitor.new
+
+  # files with extension .log
+  visitor.add_filter(:ext, :log)
+
+  # and last modified is more than 30 days ago
+  visitor.add_filter(:mtime, :passed, 30, :days)
+
+  # remove all the matched files
+  visitor.visit(root_dir) do |path|
+    FileUtils.rm(path)
+  end
+
+You can add custom filters.
+
+  class BigFileFilter
+   
+    def initialize(size)
+      @size = size
+    end
+  
+    # filter must implement match?(path)
+    def match?(path)
+      File.size(path) > @size
+    end
+  
+  end
+   
+  filter = BigFileFilter(2048)
+  visitor.add_filter(filter)
+
+BigFileFilter is testable and reusable.
+
+=== Filters
+
+==== Filename
+
+  filename string or regexp.
+
+  visitor.add_filter(:filename, "sample.txt")
+  visitor.add_filter(:filename. /\d{4}\-\d{2}\-\d{2}\.txt/)
+
+==== Extension
+
+  file extension sym or string.
+
+  visitor.add_filter(:ext, :txt)
+
+==== Modified time
+
+  # 1. specify Time instance
+  # add_filter(:mtime, comparetor_sym, time)
+  visitor.add_filter(:mtime, :equals_to, Time.parse("2013-01-03 04:59"))
+  visitor.add_filter(:mtime, :is_less_than, Time.parse("2013-01-03 04:59"))
+
+  # 2 specify number and unit sym
+  # add_filter(:mtime, :passed, number, time_unit)
+  visitor.add_filter(:mtime, :passed, 3, :days)
+
+Comparator syms you can use:
+
+* :equals_to (:==)
+* :is_greater_than (:is_younger_than, :>)
+* :is_greater_than= (:is_younger_than=, :>=)
+* :is_less_than (:is_older_than, :<)
+* :is_less_than= (:is_older_than=, :<=)
+
+Time unit
+
+* :sec, :second, :seconds
+* :min, :mins, :minute, :minutes
+* :hour, :hours
+* :day, :days
+* :month, :months (1 month = 30 days)
+* :year, :years
+
+==== Block filter
+
+  visitor.add_filter do |path|
+    # return true/false
+  end
+
+==== custom filter
+
+  class HaveMD5SumFilter
+    def match?(path)
+      File.readable?("#{path}.md5")
+    end
+  end
+
+  filter = HaveMD5SumFilter.new
+  visitor.add_filter(filter)
+
+filter instance must repond_to :match?.
+
+=== methods
+
+==== visit(dir)
+
+Collect files and execute given block.
+
+==== file_list(dir)
+
+Collect files and return path array.
+
+==== target?(path)
+
+return if the given path is target.
+
+== Install
+
+  gem install file-visitor
 
 == Contributing to file-visitor
  
