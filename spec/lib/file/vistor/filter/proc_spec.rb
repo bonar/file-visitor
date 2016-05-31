@@ -17,19 +17,19 @@ describe File::Visitor::Filter::Proc do
     filter = File::Visitor::Filter::Proc.new(proc { |path| 
       path =~ /log/
     })
-    filter.match?("/tmp/hoge/fuga.log").should be_true
-    filter.match?("/tmp/log/fuga.txt").should be_true
-    filter.match?("/tmp/hoge/fuga").should be_false
+    expect(filter.match?("/tmp/hoge/fuga.log")).to be_truthy
+    expect(filter.match?("/tmp/log/fuga.txt")).to be_truthy
+    expect(filter.match?("/tmp/hoge/fuga")).to be_falsy
   end
   
   it 'can be stringified' do
     filter1 = File::Visitor::Filter::Proc.new(proc { true })
     filter2 = File::Visitor::Filter::Proc.new(proc { false })
 
-    filter1.to_s.should be_a String
-    filter2.to_s.should be_a String
+    expect(filter1.to_s).to be_a String
+    expect(filter2.to_s).to be_a String
 
-    filter1.to_s.should_not == filter2.to_s
+    expect(filter1.to_s).not_to eq filter2.to_s
   end
 
 end

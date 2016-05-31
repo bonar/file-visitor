@@ -1,5 +1,5 @@
-module File
-  module Visitor
+class File
+  class Visitor
     VERSION = "0.1.0"
   end
 end

@@ -1,5 +1,6 @@
 
 require 'fileutils'
+require 'rspec/mocks'
 
 module SpecUtils
 

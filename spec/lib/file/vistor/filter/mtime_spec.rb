@@ -17,13 +17,13 @@ describe File::Visitor::Filter::Mtime do
 
    it "can be created with comparator/target_time" do
     filter = @ns.new(:equals_to, Time.now)
-    filter.should be_a @ns
+    expect(filter).to be_a @ns
    end
 
    context ":passed" do
 
      it ":passed initialize" do
-       Time.stub!(:now).and_return(
+       allow(Time).to receive(:now).and_return(
          Time.parse("2013-01-05 05:00"))
 
        filter1 = @ns.new(:passed, 2, :days)
@@ -43,16 +43,16 @@ describe File::Visitor::Filter::Mtime do
        File.utime(time3, time3, file3)
        File.utime(time4, time4, file4)
 
-       filter1.match?(file1).should be_true
-       filter1.match?(file2).should be_false
-       filter1.match?(file3).should be_false
-       filter1.match?(file4).should be_false
+       expect(filter1.match?(file1)).to be_truthy
+       expect(filter1.match?(file2)).to be_falsy
+       expect(filter1.match?(file3)).to be_falsy
+       expect(filter1.match?(file4)).to be_falsy
 
        filter2 = @ns.new(:passed=, 2, :days)
-       filter2.match?(file1).should be_true
-       filter2.match?(file2).should be_true
-       filter2.match?(file3).should be_false
-       filter2.match?(file4).should be_false
+       expect(filter2.match?(file1)).to be_truthy
+       expect(filter2.match?(file2)).to be_truthy
+       expect(filter2.match?(file3)).to be_falsy
+       expect(filter2.match?(file4)).to be_falsy
      end
 
    end
@@ -88,26 +88,26 @@ describe File::Visitor::Filter::Mtime do
 
      it "supports eq filter" do
        filter = @ns.new(:equals_to, @time2)
-       filter.match?(@file1).should be_false
-       filter.match?(@file2).should be_true
-       filter.match?(@file3).should be_false
-       filter.match?(@file4).should be_false
+       expect(filter.match?(@file1)).to be_falsy
+       expect(filter.match?(@file2)).to be_truthy
+       expect(filter.match?(@file3)).to be_falsy
+       expect(filter.match?(@file4)).to be_falsy
      end
 
      it "supports lt filter" do
        filter = @ns.new(:is_less_than, @time2)
-       filter.match?(@file1).should be_true
-       filter.match?(@file2).should be_false
-       filter.match?(@file3).should be_false
-       filter.match?(@file4).should be_false
+       expect(filter.match?(@file1)).to be_truthy
+       expect(filter.match?(@file2)).to be_falsy
+       expect(filter.match?(@file3)).to be_falsy
+       expect(filter.match?(@file4)).to be_falsy
      end
 
      it "supports gt filter" do
        filter = @ns.new(:is_greater_than, @time2)
-       filter.match?(@file1).should be_false
-       filter.match?(@file2).should be_false
-       filter.match?(@file3).should be_true
-       filter.match?(@file4).should be_true
+       expect(filter.match?(@file1)).to be_falsy
+       expect(filter.match?(@file2)).to be_falsy
+       expect(filter.match?(@file3)).to be_truthy
+       expect(filter.match?(@file4)).to be_truthy
      end
 
    end

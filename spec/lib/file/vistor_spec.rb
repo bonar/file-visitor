@@ -16,7 +16,7 @@ describe File::Visitor do
 
   it 'can be created with new()' do
     visitor = File::Visitor.new
-    visitor.should be_a File::Visitor
+    expect(visitor).to be_a File::Visitor
   end
 
   describe 'file/directory traversal' do
@@ -38,10 +38,10 @@ describe File::Visitor do
         files.push File.basename(path)
       end
 
-      files.size.should == 3
-      files[0].should == "file1"
-      files[1].should == "file2"
-      files[2].should == "file3"
+      expect(files.size).to eq 3
+      expect(files[0]).to eq "file1"
+      expect(files[1]).to eq "file2"
+      expect(files[2]).to eq "file3"
     end
 
     it 'can visit sibling directories' do
@@ -54,10 +54,10 @@ describe File::Visitor do
         files.push File.basename(path)
       end
 
-      files.size.should == 3
-      files[0].should == "file10"
-      files[1].should == "file11"
-      files[2].should == "file12"
+      expect(files.size).to eq 3
+      expect(files[0]).to eq "file10"
+      expect(files[1]).to eq "file11"
+      expect(files[2]).to eq "file12"
     end
 
     it 'can visit deep directories' do
@@ -70,10 +70,10 @@ describe File::Visitor do
         files.push File.basename(path)
       end
 
-      files.size.should == 3
-      files[0].should == "file20"
-      files[1].should == "file21"
-      files[2].should == "file22"
+      expect(files.size).to eq 3
+      expect(files[0]).to eq "file20"
+      expect(files[1]).to eq "file21"
+      expect(files[2]).to eq "file22"
     end
 
     it 'return empty array when no target files' do
@@ -81,7 +81,7 @@ describe File::Visitor do
       @visitor.visit(test_dir) do |path|
         files.push File.basename(path)
       end
-      files.should be_empty
+      expect(files).to be_empty
     end
 
     it 'can do dir-only traversal' do
@@ -91,14 +91,14 @@ describe File::Visitor do
 
       dirs = []
       @visitor.visit_dir(test_dir) do |path|
-        File.directory?(path).should be_true
+        expect(File.directory?(path)).to be_truthy
         dirs.push File.basename(path)
       end
 
-      dirs.size.should == 3
-      dirs[0].should == "dir1"
-      dirs[1].should == "dir2-1"
-      dirs[2].should == "dir2-2"
+      expect(dirs.size).to eq 3
+      expect(dirs[0]).to eq "dir1"
+      expect(dirs[1]).to eq "dir2-1"
+      expect(dirs[2]).to eq "dir2-2"
     end
 
   end
@@ -109,15 +109,15 @@ describe File::Visitor do
     create_file(['dir2'], 'file3', 'c')
 
     files = @visitor.file_list(test_dir)
-    files.size.should == 3
+    expect(files.size).to eq 3
 
-    File.exist?(files[0]).should be_true
-    File.exist?(files[1]).should be_true
-    File.exist?(files[2]).should be_true
+    expect(File.exist?(files[0])).to be_truthy
+    expect(File.exist?(files[1])).to be_truthy
+    expect(File.exist?(files[2])).to be_truthy
 
-    File.basename(files[0]).should == "file1"
-    File.basename(files[1]).should == "file2"
-    File.basename(files[2]).should == "file3"
+    expect(File.basename(files[0])).to eq "file1"
+    expect(File.basename(files[1])).to eq "file2"
+    expect(File.basename(files[2])).to eq "file3"
   end
 
   it 'can get dir list' do
@@ -126,13 +126,13 @@ describe File::Visitor do
     create_file(['dir2'], 'file3', 'c')
 
     dirs = @visitor.dir_list(test_dir)
-    dirs.size.should == 2
+    expect(dirs.size).to eq 2
 
-    File.directory?(dirs[0]).should be_true
-    File.directory?(dirs[1]).should be_true
+    expect(File.directory?(dirs[0])).to be_truthy
+    expect(File.directory?(dirs[1])).to be_truthy
 
-    File.basename(dirs[0]).should == "dir1"
-    File.basename(dirs[1]).should == "dir2"
+    expect(File.basename(dirs[0])).to eq "dir1"
+    expect(File.basename(dirs[1])).to eq "dir2"
   end
 
   context "filters registration" do
@@ -142,8 +142,8 @@ describe File::Visitor do
 
     it 'built-in filter' do
       @visitor.add_filter(:name, '2013-01-01.log')
-      @visitor.filters.size.should == 1
-      @visitor.filters[0].should be_a File::Visitor::Filter::Name
+      expect(@visitor.filters.size).to eq 1
+      expect(@visitor.filters[0]).to be_a File::Visitor::Filter::Name
     end
 
     it 'custom filter' do
@@ -153,8 +153,8 @@ describe File::Visitor do
         end
       end
       @visitor.add_filter(ValidCustomFilter.new)
-      @visitor.filters.size.should == 1
-      @visitor.filters[0].should be_a ValidCustomFilter
+      expect(@visitor.filters.size).to eq 1
+      expect(@visitor.filters[0]).to be_a ValidCustomFilter
     end
 
     it "add custom filter fails on invalid class" do
@@ -170,8 +170,8 @@ describe File::Visitor do
       @visitor.add_filter do |path|
         path =~ /\./
       end
-      @visitor.filters.size.should == 1
-      @visitor.filters[0].should be_a File::Visitor::Filter::Proc
+      expect(@visitor.filters.size).to eq 1
+      expect(@visitor.filters[0]).to be_a File::Visitor::Filter::Proc
     end
 
   end
@@ -179,16 +179,16 @@ describe File::Visitor do
   describe "target?" do
 
     it "all the paths are target, when no filters" do
-      @visitor.target?("/tmp").should be_true
+      expect(@visitor.target?("/tmp")).to be_truthy
     end
 
     it "filter AND combination" do
       @visitor.add_filter(:ext, :txt)
       @visitor.add_filter { |path| path =~ /feb/ }
       
-      @visitor.target?("/tmp/2013-jan.txt").should be_false
-      @visitor.target?("/tmp/2013-feb.txt").should be_true
-      @visitor.target?("/tmp/2013-mar.txt").should be_false
+      expect(@visitor.target?("/tmp/2013-jan.txt")).to be_falsy
+      expect(@visitor.target?("/tmp/2013-feb.txt")).to be_truthy
+      expect(@visitor.target?("/tmp/2013-mar.txt")).to be_falsy
     end
 
   end

@@ -10,31 +10,31 @@ describe File::Visitor::Filter::Name do
   it 'can match filename string' do
     filter = File::Visitor::Filter::Name.new('file')
 
-    filter.match?("/path/to/file").should be_true
-    filter.match?("file").should be_true
+    expect(filter.match?("/path/to/file")).to be_truthy
+    expect(filter.match?("file")).to be_truthy
 
-    filter.match?("file.txt").should be_false
-    filter.match?(".file").should be_false
+    expect(filter.match?("file.txt")).to be_falsy
+    expect(filter.match?(".file")).to be_falsy
   end
 
   it 'can match filename regexp' do
     filter = File::Visitor::Filter::Name.new(/file\.\w+/)
 
-    filter.match?("/path/to/file.txt").should be_true
-    filter.match?("/path/to/xxx_file.txt").should be_true
-    filter.match?("file.jpg").should be_true
+    expect(filter.match?("/path/to/file.txt")).to be_truthy
+    expect(filter.match?("/path/to/xxx_file.txt")).to be_truthy
+    expect(filter.match?("file.jpg")).to be_truthy
 
-    filter.match?("/path/to/file").should be_false
+    expect(filter.match?("/path/to/file")).to be_falsy
   end
 
   it 'can be stringified' do
     str1 = File::Visitor::Filter::Name.new("strfilter").to_s
     str2 = File::Visitor::Filter::Name.new(/filename\.\w+/).to_s
 
-    str1.should be_a String
-    str2.should be_a String
+    expect(str1).to be_a String
+    expect(str2).to be_a String
 
-    str1.should_not == str2
+    expect(str1).not_to eq str2
   end
 
 end

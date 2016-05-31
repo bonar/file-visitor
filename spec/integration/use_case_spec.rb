@@ -23,12 +23,13 @@ describe 'use case test' do
       visitor.add_filter(:ext, :log)
       visitor.add_filter { |path| path =~ /2013\-02/ }
 
-      FileUtils.stub!(:rm).with(@path2)
-      FileUtils.stub!(:rm).with(@path3) 
+      allow(FileUtils).to receive(:rm).with(@path2)
+      allow(FileUtils).to receive(:rm).with(@path3) 
 
       visitor.visit(test_dir) do |path|
         FileUtils.rm(path)
       end
+
     end
 
     it 'removes old logs' do
@@ -42,18 +43,18 @@ describe 'use case test' do
       File.utime(time3, time3, @path3)
       File.utime(time4, time4, @path4)
 
-      Time.stub!(:now).and_return(Time.parse("2013-01-04 22:00:00"))
+      allow(Time).to receive(:now).and_return(Time.parse("2013-01-04 22:00:00"))
 
       visitor = File::Visitor.new
       visitor.add_filter(:mtime, :passed, 1, :day)
 
-      visitor.file_list(test_dir).should == [@path1, @path2, @path3]
+      expect(visitor.file_list(test_dir)).to eq([@path1, @path2, @path3])
 
       visitor.add_filter(:mtime, :passed, 2, :days)
-      visitor.file_list(test_dir).should == [@path1, @path2]
+      expect(visitor.file_list(test_dir)).to eq([@path1, @path2])
 
       visitor.add_filter(:mtime, :passed, 3, :days)
-      visitor.file_list(test_dir).should == [@path1]
+      expect(visitor.file_list(test_dir)).to eq([@path1])
     end
 
   end
