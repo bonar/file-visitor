@@ -1,3 +1,5 @@
+require 'file/visitor'
+require 'file/visitor/version'
 
 def spec_data_dir
   data_dir = File.join(
