@@ -19,7 +19,7 @@ class File
       @filters = []
 
       @visit_dot_dir = false
-      @direction = :desc
+      @direction = :asc
     end
 
     def set_direction(dir)
@@ -124,7 +124,14 @@ class File
     def visit_with_mode(dir, mode, &handler)
       assert_directory(dir)
 
-      Dir.entries(dir).each do |entry|
+      entries = Dir.entries(dir)
+        .sort_by { |filename| filename }
+
+      if @direction == :desc
+        entries.reverse!
+      end
+
+      entries.each do |entry|
         next if (dot_dir?(entry) && !@visit_dot_dir)
 
         abs_path = File.join(dir, entry)

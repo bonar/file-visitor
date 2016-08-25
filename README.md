@@ -16,7 +16,7 @@ But in the following cases, it is not enough.
 * need to write the conditions of the file path to collect by ruby. 
 * need to test and reuse conditions. 
 
-file-visitor way to collect files
+Collecting files with file-visitor:
 
     require 'file/visitor'
     
@@ -27,6 +27,9 @@ file-visitor way to collect files
     
     # and last modified is more than 30 days ago
     visitor.add_filter(:mtime, :passed, 30, :days)
+
+    # set sort order (:asc or :desc)
+    visitor.set_direction(:desc) 
 
     # remove all the matched files
     visitor.visit(root_dir) do |path|

@@ -196,7 +196,7 @@ describe File::Visitor do
   describe "direction" do
 
     it "has a default direction" do
-      expect(@visitor.direction).to eq :desc
+      expect(@visitor.direction).to eq :asc
     end
 
     it "changes direction" do
@@ -215,6 +215,35 @@ describe File::Visitor do
         .to raise_error(ArgumentError, /invalid/)
       expect { @visitor.set_direction(:hoge) }
         .to raise_error(ArgumentError, /invalid/)
+    end
+
+    describe "affects list order" do
+
+      before(:each) do
+        create_file(['dirA'], 'fileA1', '')
+        create_file(['dirA'], 'fileA2', '')
+        create_file(['dirB'], 'fileB1', '')
+        create_file(['dirB'], 'fileB2', '')
+      end
+
+      it "ascending" do
+        @visitor.set_direction(:asc)
+        files = @visitor.file_list(test_dir)
+        expect(File.basename(files[0])).to eq "fileA1"
+        expect(File.basename(files[1])).to eq "fileA2"
+        expect(File.basename(files[2])).to eq "fileB1"
+        expect(File.basename(files[3])).to eq "fileB2"
+      end
+
+      it "descending" do
+        @visitor.set_direction(:desc)
+        files = @visitor.file_list(test_dir)
+        expect(File.basename(files[0])).to eq "fileB2"
+        expect(File.basename(files[1])).to eq "fileB1"
+        expect(File.basename(files[2])).to eq "fileA2"
+        expect(File.basename(files[3])).to eq "fileA1"
+      end
+
     end
 
   end
