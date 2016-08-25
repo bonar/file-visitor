@@ -1,4 +1,6 @@
 
+require 'set'
+
 require 'file/visitor/filter'
 require 'file/visitor/filter_dispatcher'
 require 'file/visitor/filter/proc'
@@ -6,15 +8,29 @@ require 'file/visitor/filter/proc'
 class File
   class Visitor
 
-    attr_reader :filters
+    attr_reader :filters, :direction
     attr_accessor :visit_dot_dir
 
     FILTER_NS_BASE = File::Visitor::Filter
+
+    DIRECTION = Set.new [:asc, :desc]
 
     def initialize
       @filters = []
 
       @visit_dot_dir = false
+      @direction = :desc
+    end
+
+    def set_direction(dir)
+      if dir.nil?
+        raise ArgumentError, "direction is nil"
+      end
+      if !DIRECTION.include?(dir.to_sym)
+        raise ArgumentError,
+          "invalid direction: " + dir.to_s
+      end
+      @direction = dir
     end
 
     def visit(dir, &handler)

@@ -193,5 +193,31 @@ describe File::Visitor do
 
   end
 
+  describe "direction" do
+
+    it "has a default direction" do
+      expect(@visitor.direction).to eq :desc
+    end
+
+    it "changes direction" do
+      @visitor.set_direction(:desc)
+      expect(@visitor.direction).to eq :desc
+      @visitor.set_direction(:asc)
+      expect(@visitor.direction).to eq :asc
+      @visitor.set_direction(:desc)
+      expect(@visitor.direction).to eq :desc
+    end
+
+    it "raises error on invalid direction" do
+      expect { @visitor.set_direction(nil) }
+        .to raise_error(ArgumentError, /is nil/)
+      expect { @visitor.set_direction("hoge") }
+        .to raise_error(ArgumentError, /invalid/)
+      expect { @visitor.set_direction(:hoge) }
+        .to raise_error(ArgumentError, /invalid/)
+    end
+
+  end
+
 end
 
