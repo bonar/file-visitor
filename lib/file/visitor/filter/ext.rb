@@ -3,24 +3,36 @@ require 'file/visitor/filter'
 
 class File::Visitor::Filter::Ext
 
-    def initialize(extstr)
-      if extstr.nil? || !(extstr.is_a?(String) || extstr.is_a?(Symbol))
-        raise ArgumentError, "ext must be Sting/Symbol"
+    def initialize(ext)
+      if ext.is_a?(Array)
+        @extentions = ext
+      elsif ext.nil?
+        raise ArgumentError, "ext is nil"
+      else
+        @extentions = [ext]
       end
-      extstr = extstr.to_s
-      unless extstr =~ /\A\./
-        extstr = ".#{extstr}"
+
+      @extentions = @extentions.map do |extention|
+        if extention.nil? ||
+          !(extention.is_a?(String) || extention.is_a?(Symbol))
+          raise ArgumentError, "ext must be Sting/Symbol."
+        end
+
+        extention = extention.to_s
+        unless extention =~ /\A\./
+          extention = ".#{extention}"
+        end
+        extention
       end
-      @ext = extstr
     end
 
     def match?(path)
       ext = File.extname(path)
-      ext == @ext
+      @extentions.any? { |fext| ext == fext }
     end
 
     def to_s
-      "%s[%s]" % [self.class.name, @ext.to_s]
+      "%s[%s]" % [self.class.name, @extentions.join(',')]
     end
 
 end
