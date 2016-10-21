@@ -69,7 +69,8 @@ filename string or regexp.
 
 file extension sym or string.
 
-    visitor.add_filter(:ext, :txt)
+    visitor.add_filter(:ext, 'txt')
+    visitor.add_filter(:ext, ['txt', 'log', 'log.gz']) // OR condition
 
 #### Modified time
 
